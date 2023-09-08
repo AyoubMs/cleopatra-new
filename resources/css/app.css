@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+[x-cloak] {
+    display: none;
+}
+
+.position-right {
+    right: -11px !important;
+}
+
+textarea {
+
+}
