@@ -32,9 +32,7 @@ class Templates extends Component
     #[On('openSidebar')]
     public function openSidebar()
     {
-        $this->showTemplate = false;
-        $this->showTemplates = false;
-        $this->showCategories = true;
+        $this->mount();
     }
 
     public function useTranslation()
@@ -44,7 +42,8 @@ class Templates extends Component
 
     public function returnToTemplates()
     {
-        $this->showTemplate = true;
+        $this->showTemplate = false;
+        $this->showTemplates = true;
     }
 
     public function selectTemplate($template)
@@ -57,8 +56,8 @@ class Templates extends Component
     public function mount()
     {
         $this->selectedClient = Tenant::where('id', Auth::user()->tenant_id)->first();
-        $this->templates = Template::where('tenant_id', Auth::user()->tenant_id)->get();
-        $this->categories = Category::where('tenant_id', Auth::user()->tenant_id)->get();
+        $this->templates = Template::query()->select('id', 'template_var', 'template_html', 'category_id')->with('tenant')->where('tenant_id', Auth::user()->tenant_id)->get();
+        $this->categories = Category::query()->with('tenant')->where('tenant_id', Auth::user()->tenant_id)->get();
         $this->showCategories = true;
         $this->showTemplates = false;
         $this->selectedTemplate = '';
@@ -73,7 +72,7 @@ class Templates extends Component
     public function selectCategory($category)
     {
         $this->selectedCategory = $category;
-        $this->templates = Template::where(['category_id' => $category['id']])->get();
+        $this->templates = Template::with('tenant')->where(['category_id' => $category['id']])->get();
         $this->showCategories = false;
         $this->showTemplates = true;
     }

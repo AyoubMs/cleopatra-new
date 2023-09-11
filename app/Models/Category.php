@@ -10,6 +10,11 @@ class Category extends Model
     use HasFactory;
     protected $guarded = [];
 
+    public function tenant()
+    {
+        return $this->belongsTo(Tenant::class);
+    }
+
     public function templates()
     {
         return $this->hasMany(Template::class);

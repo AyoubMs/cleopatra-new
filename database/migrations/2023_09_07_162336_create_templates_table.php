@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('templates', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('tenant_id')->nullable();
-            $table->foreignId('category_id');
+            $table->unsignedBigInteger('tenant_id')->nullable()->index();
+            $table->foreignId('category_id')->index();
             $table->text('template_var');
             $table->text('template_html');
-            $table->string('title');
+            $table->string('title')->index();
             $table->timestamps();
         });
     }

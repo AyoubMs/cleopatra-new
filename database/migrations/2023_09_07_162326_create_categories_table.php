@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('tenant_id')->nullable();
-            $table->string('name');
+            $table->unsignedBigInteger('tenant_id')->nullable()->index();
+            $table->string('name')->index();
             $table->timestamps();
         });
     }

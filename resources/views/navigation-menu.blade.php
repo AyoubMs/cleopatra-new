@@ -127,7 +127,10 @@
             </x-dropdown>
         </div>
     </div>
-    <div x-show="open" x-transition:enter="transition ease-out duration-300"
+    <div x-show="open"
+         x-transition:enter="transition duration-1000"
+         x-transition:enter-start="opacity-0 scale-125"
+         x-transition:enter-end="opacity-100 scale-100"
          class="w-full p-6 overflow-y-scroll" x-cloak>
         @livewire('templates')
     </div>

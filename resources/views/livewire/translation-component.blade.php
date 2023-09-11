@@ -44,7 +44,9 @@
         <textarea type="text" class="w-full h-72 bg-white p-4 border-transparent" wire:model.live="inverseText"
                   wire:input.prevent.debounce.2500ms="translateInverse" placeholder="Choose a template or start typing to translate...">{{ $inverseText }}</textarea>
         <x-paste-icon id="inverseText"/>
-        <x-button @click="open = true" wire:click="chooseATemplate" class="!bg-blue-500 hover:!bg-white hover:text-blue-500 hover:border-blue-500 relative bottom-3/4 start-60">Choose a Template</x-button>
+        @if($inverseText === '')
+            <x-button @click="open = true" wire:click="chooseATemplate" class="!bg-blue-500 hover:!bg-white hover:text-blue-500 hover:border-blue-500 relative bottom-3/4 start-60">Choose a Template</x-button>
+        @endif
     </div>
     <div class="w-[44rem] h-72 px-4 mb-12 mt-8">
         <div class="bg-white border-b-2 w-full h-12 flex items-center px-4" x-cloak>
