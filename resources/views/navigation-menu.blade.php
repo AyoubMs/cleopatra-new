@@ -13,6 +13,11 @@
             <i x-show="open" @click="open = ! open" class="fa-solid fa-comments text-xl cursor-pointer"
                style="color: #0075ff;"></i>
         </div>
+        @if(Auth::user()->is_admin)
+            <div class="w-1/2 mx-auto text-center mt-4">
+                <a href="/templates"><i class="fa-solid fa-file-lines text-xl cursor-pointer"></i></a>
+            </div>
+        @endif
         <div class="absolute top-1/2" :class="open ? 'text-right end-0 position-right' : 'text-center start-12'">
             <i @click="open = ! open" x-show="! open" class="fa-solid fa-circle-chevron-right text-xl cursor-pointer"
                style="color: #0075ff;"></i>
@@ -24,7 +29,7 @@
                 <x-slot name="trigger">
                     @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
                         <button
-                            class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition w-8 h-8 mx-auto">
+                                class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition w-8 h-8 mx-auto">
                             <img class="rounded-full object-cover" style="max-width: 40px !important;"
                                  src="{{ Auth::user()->profile_photo_url }}"
                                  alt="{{ Auth::user()->name }}"/>
@@ -83,16 +88,16 @@
                                         <!-- Team Settings -->
                                         @if(! is_null(Auth::user()->currentTeam))
                                             <x-dropdown-link
-                                                href="{{ route('teams.show', Auth::user()->currentTeam->id) }}">
+                                                    href="{{ route('teams.show', Auth::user()->currentTeam->id) }}">
                                                 {{ __('Team Settings') }}
                                             </x-dropdown-link>
                                         @endif
                                         {{--Create Team--}}
-{{--                                        @can('create', Laravel\Jetstream\Jetstream::newTeamModel())--}}
-{{--                                            <x-dropdown-link href="{{ route('teams.create') }}">--}}
-{{--                                                {{ __('Create New Team') }}--}}
-{{--                                            </x-dropdown-link>--}}
-{{--                                        @endcan--}}
+                                        {{--                                        @can('create', Laravel\Jetstream\Jetstream::newTeamModel())--}}
+                                        {{--                                            <x-dropdown-link href="{{ route('teams.create') }}">--}}
+                                        {{--                                                {{ __('Create New Team') }}--}}
+                                        {{--                                            </x-dropdown-link>--}}
+                                        {{--                                        @endcan--}}
 
                                         <!-- Team Switcher -->
                                         @if (Auth::user()->allTeams()->count() > 1)
@@ -156,7 +161,8 @@
 
             <div class="mt-3 space-y-1">
                 <!-- Account Management -->
-                <x-responsive-nav-link href="{{ route('profile.show') }}" :active="request()->routeIs('profile.show')" x-cloak>
+                <x-responsive-nav-link href="{{ route('profile.show') }}" :active="request()->routeIs('profile.show')"
+                                       x-cloak>
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
 

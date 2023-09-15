@@ -8,6 +8,6 @@
         @endforeach
     </select>
     @if($tenant !== '')
-        <x-button class="mt-4 !bg-blue-500 hover:!bg-white hover:text-blue-500 hover:border-blue-500" wire:click="setTenant({{$tenant->id}})">Submit</x-button>
+        <x-button class="mt-4 !bg-blue-500 hover:!bg-white hover:text-blue-500 hover:border-blue-500 !text-white hover:!text-blue-500" wire:click="setTenant({{$tenant->id}})">Submit</x-button>
     @endif
 </div>

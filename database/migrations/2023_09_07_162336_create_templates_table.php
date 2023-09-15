@@ -16,7 +16,6 @@ return new class extends Migration
             $table->unsignedBigInteger('tenant_id')->nullable()->index();
             $table->foreignId('category_id')->index();
             $table->text('template_var');
-            $table->text('template_html');
             $table->string('title')->index();
             $table->timestamps();
         });

@@ -3,6 +3,7 @@
 use App\Models\Team;
 use App\Models\Tenant;
 use App\Models\User;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
@@ -21,7 +22,7 @@ use \Illuminate\Support\Facades\Redis;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('dashboard');
 });
 
 Route::middleware([
@@ -32,6 +33,13 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
+
+    Route::get('/templates', function() {
+        if (!auth()->user()->is_admin) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
+        return view('templates.index');
+    });
 });
 
 Route::middleware([

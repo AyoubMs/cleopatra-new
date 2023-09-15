@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tenants', function (Blueprint $table) {
-            $table->id()->index();
-            $table->string('name')->index();
-            $table->string('templates_lang')->index();
-            $table->string('supported_langs')->index()->nullable();
-            $table->timestamps();
+        Schema::table('templates', function (Blueprint $table) {
+            $table->text('translations');
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tenants');
+        Schema::table('templates', function (Blueprint $table) {
+            //
+        });
     }
 };

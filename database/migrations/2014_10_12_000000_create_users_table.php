@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('provider_id')->nullable();
             $table->timestamps();
             $table->unsignedBigInteger('tenant_id')->nullable();
+            $table->boolean('is_admin')->nullable();
         });
     }
 

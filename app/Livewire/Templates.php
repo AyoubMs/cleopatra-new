@@ -35,46 +35,47 @@ class Templates extends Component
         $this->mount();
     }
 
+    #[On('useTranslation')]
     public function useTranslation()
     {
         $this->dispatch('useTemplate', $this->selectedTemplate['template_var']);
     }
 
-    public function returnToTemplates()
+    #[On('templateAndTemplates')]
+    public function templateAndTemplates($showTemplate = false, $showTemplates = true)
     {
-        $this->showTemplate = false;
-        $this->showTemplates = true;
+        $this->showTemplate = $showTemplate;
+        $this->showTemplates = $showTemplates;
     }
 
     public function selectTemplate($template)
     {
         $this->selectedTemplate = $template;
-        $this->showTemplates = false;
-        $this->showTemplate = true;
+        $this->templateAndTemplates(true, false);
     }
 
     public function mount()
     {
         $this->selectedClient = Tenant::where('id', Auth::user()->tenant_id)->first();
-        $this->templates = Template::query()->select('id', 'template_var', 'template_html', 'category_id')->with('tenant')->where('tenant_id', Auth::user()->tenant_id)->get();
+        $this->templates = Template::query()->select('id', 'template_var', 'category_id', 'title')->with('tenant')->where('tenant_id', Auth::user()->tenant_id)->get();
         $this->categories = Category::query()->with('tenant')->where('tenant_id', Auth::user()->tenant_id)->get();
-        $this->showCategories = true;
-        $this->showTemplates = false;
+        $this->categoriesAndTemplates();
         $this->selectedTemplate = '';
     }
 
-    public function returnToCategories()
+    #[On('categoriesAndTemplates')]
+    public function categoriesAndTemplates($showCategories = true, $showTemplates = false)
     {
-        $this->showCategories = true;
-        $this->showTemplates = false;
+        $this->showCategories = $showCategories;
+        $this->showTemplates = $showTemplates;
     }
 
+    #[On('selectCategory')]
     public function selectCategory($category)
     {
         $this->selectedCategory = $category;
         $this->templates = Template::with('tenant')->where(['category_id' => $category['id']])->get();
-        $this->showCategories = false;
-        $this->showTemplates = true;
+        $this->categoriesAndTemplates(false, true);
     }
 
     public function render()

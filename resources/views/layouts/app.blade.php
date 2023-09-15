@@ -19,10 +19,28 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link href="{{ asset('css/styles.css') }}" rel="stylesheet" type="text/css">
 
+    <style>
+        dialog::backdrop {
+            background: red;
+        }
+
+        .top-100 {
+            top: 100%
+        }
+
+        .bottom-100 {
+            bottom: 100%
+        }
+
+        .max-h-select {
+            max-height: 300px;
+        }
+    </style>
+
     <!-- Styles -->
     @livewireStyles
 </head>
-<body x-data="{ open: false }" class="font-sans antialiased">
+<body x-data="{ open: false }" class="font-sans antialiased bg-gray-100">
 <x-banner/>
 
 <div class="min-h-screen bg-gray-100 flex">
@@ -47,6 +65,48 @@
 
 @livewireScripts
 <script>
+    async function useTranslation() {
+        await triggerEvent('useTranslation', [])
+    }
+
+    async function templateAndTemplates() {
+        await triggerEvent('templateAndTemplates', [])
+    }
+
+    async function categoriesAndTemplates() {
+        await triggerEvent('categoriesAndTemplates', [])
+    }
+
+    async function selectCategory(category) {
+        await triggerEvent('selectCategory', [category])
+    }
+
+    async function openLanguages() {
+        await triggerEvent('openLanguages', [])
+    }
+
+    async function selectTemplate(template, language = '') {
+        await triggerEvent('selectTemplate', [template, language])
+    }
+
+    async function selectLanguage(language, index) {
+        await triggerEvent('selectLanguage', [language, index]);
+    }
+
+    async function removeLanguage(language) {
+        await triggerEvent('removeLanguage', [language]);
+    }
+
+    async function triggerEvent(eventName, details) {
+        try {
+            window.dispatchEvent(new CustomEvent(eventName, {
+                detail: [...details]
+            }))
+        } catch (err) {
+            console.error('Failed the event: ', err)
+        }
+    }
+
     async function copyToClipboard(id) {
         const text = document.getElementById(id).innerText;
         try {
@@ -63,9 +123,15 @@
             window.dispatchEvent(new CustomEvent('paste', {
                 detail: [id, text]
             }))
+            document.getElementById(id).focus();
+            document.getElementById(id).value = text;
         } catch (err) {
             console.error('Failed to paste: ', err)
         }
+    }
+
+    function useTemplate() {
+        document.getElementById('inverseText').value = document.getElementById('selectedTemplate').innerText
     }
 </script>
 </body>

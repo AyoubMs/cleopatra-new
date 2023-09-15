@@ -2,8 +2,10 @@
 
 namespace App\Livewire;
 
+use App\Models\Template;
 use DeepL\Translator;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Redis;
 use Livewire\Attributes\On;
@@ -56,38 +58,37 @@ class TranslationComponent extends Component
     public $targetLanguage = "EN-US";
 
     public $languageWidths = [
-        'none' => 'w-36',
+        'none' => 'w-40',
         'BG' => 'w-24',
         'CS' => 'w-20',
         'DA' => 'w-20',
-        'DE' => 'w-20',
+        'DE' => 'w-24',
         'EL' => 'w-20',
-        'EN-US' => 'w-20',
-        'ES' => 'w-20',
+        'EN-US' => 'w-24',
+        'ES' => 'w-24',
         'ET' => 'w-24',
         'FI' => 'w-20',
         'FR' => 'w-20',
-        'HU' => 'w-24',
+        'HU' => 'w-28',
         'ID' => 'w-28',
-        'IT' => 'w-16',
+        'IT' => 'w-20',
         'JA' => 'w-24',
         'KO' => 'w-20',
-        'LT' => 'w-24',
+        'LT' => 'w-28',
         'LV' => 'w-20',
         'NB' => 'w-44',
         'NL' => 'w-20',
         'PL' => 'w-20',
-        'PT' => 'w-50',
-        'RO' => 'w-24',
-        'RU' => 'w-20',
+        'PT' => 'w-[22rem]',
+        'RO' => 'w-28',
+        'RU' => 'w-24',
         'SK' => 'w-20',
         'SL' => 'w-24',
-        'SV' => 'w-20',
+        'SV' => 'w-24',
         'TR' => 'w-20',
         'UK' => 'w-24',
         'ZH' => 'w-24',
     ];
-
     public $languageWidthsDetected = [
         'none' => 'w-36',
         'BG' => 'w-44',
@@ -120,11 +121,15 @@ class TranslationComponent extends Component
         'UK' => 'w-44',
         'ZH' => 'w-40',
     ];
+    public $templates;
 
     public function mount($property = '', $template = '')
     {
         $this->fill(["inverseText" => $property === 'inverseText' ? $template : '', "firstText" => $property === 'firstText' ? $template : '']);
+        $this->templates = Template::query()->where('tenant_id', Auth::user()->tenant_id)->get();
     }
+
+
 
     public function chooseATemplate()
     {
@@ -149,45 +154,52 @@ class TranslationComponent extends Component
         $this->translateInverse();
     }
 
+    public function translation($valueFromRedis, $valueSetRedis, $inverse = false)
+    {
+        if ($valueFromRedis) {
+            $this->setPropertiesFromApi($valueFromRedis, $inverse);
+            return;
+        }
+        $result = $this->queryDeeplAPI($inverse);
+        if (gettype($result) === "string") {
+            $this->errorMessage = "Please select a language";
+            return;
+        };
+        $userTranslation = [
+            'translatedText' => $result->text,
+            'detectedSourceLang' => $result->detectedSourceLang,
+            'selectedSourceLang' => $inverse ? $this->targetLanguage : $this->language
+        ];
+        Redis::hmset("$valueSetRedis", $userTranslation);
+        $this->setPropertiesFromApi($userTranslation, $inverse);
+    }
+
     public function translateInverse()
     {
         $inverseTargetLang = $this->language === 'none' ? $this->detectedSourceLang : $this->language;
-        if ($value = Redis::hgetall("$this->inverseText.$inverseTargetLang")) {
-            $this->setPropertiesFromApi($value, true);
-            return;
-        }
-        $result = $this->queryDeeplAPI(true);
-        if (gettype($result) === "string") {
-            $this->errorMessage = "Please select a language";
-            return;
-        }
-        $userTranslation = [
-            'translatedText' => $result->text,
-            'detectedSourceLang' => $result->detectedSourceLang,
-            'selectedSourceLang' => $this->targetLanguage
-        ];
-        Redis::hmset("$this->inverseText.$inverseTargetLang", $userTranslation);
-        $this->setPropertiesFromApi($userTranslation, true);
+        $this->translation(Redis::hgetall("$this->inverseText.$inverseTargetLang") , $this->inverseText.$inverseTargetLang, true);
     }
 
-    public function translate()
+    public function translate($inverse = false)
     {
-        if ($value = Redis::hgetall("$this->firstText.$this->targetLanguage")) {
-            $this->setPropertiesFromApi($value);
+        if ($inverse) {
+            $this->translateInverse();
             return;
         }
-        $result = $this->queryDeeplAPI();
-        if (gettype($result) === "string") {
-            $this->errorMessage = "Please select a language";
-            return;
+        foreach ($this->templates as $template) {
+            foreach (json_decode($template->translations) as $translation) {
+                if ($translation->lang === $this->lang_codes[$this->targetLanguage] && $template->template_var === $this->firstText) {
+                    $api = [
+                        'translatedText' => $translation->trans,
+                        'detectedSourceLang' => $translation->lang,
+                        'selectectedSourceLang' => $this->language
+                    ];
+                    $this->setPropertiesFromApi($api);
+                    return;
+                }
+            }
         }
-        $userTranslation = [
-            'translatedText' => $result->text,
-            'detectedSourceLang' => $result->detectedSourceLang,
-            'selectedSourceLang' => $this->language
-        ];
-        Redis::hmset("$this->firstText.$this->targetLanguage", $userTranslation);
-        $this->setPropertiesFromApi($userTranslation);
+        $this->translation(Redis::hgetall("$this->firstText.$this->targetLanguage"), $this->firstText.$this->targetLanguage);
     }
 
     public function setPropertiesFromApi($api, $inverse = false)
@@ -207,7 +219,7 @@ class TranslationComponent extends Component
             $authKey = env('DEEPL_API_KEY');
             $translator = new Translator($authKey);
             if ($inverse) {
-                $sourceLang = strtolower($this->targetLanguage) === 'en-us' ? 'en' : strtolower($this->targetLanguage);
+                $sourceLang = null;
             } else {
                 $sourceLang = $this->language === 'none' ? null : $this->language;
             }
