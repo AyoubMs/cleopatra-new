@@ -28,9 +28,7 @@ class TenantComponent extends Component
                 'name' => explode(' ', Auth::user()->name, 2)[0] . "'s Team",
                 'personal_team' => true
             ]);
-//            Auth::user()->teams()->save($team);
         }
-        Auth::user()->update(['current_team_id' => Team::where('user_id', Auth::user()->id)->first()->id]);
         Auth::user()->tenant_id = $tenant;
         Auth::user()->save();
         return redirect('dashboard');

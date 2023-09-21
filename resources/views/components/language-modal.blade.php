@@ -6,7 +6,7 @@
     'templateBody'
 ])
 
-div class="fixed inset-0 bg-gray-300 opacity-70"></div>
+<div class="fixed inset-0 bg-gray-300 opacity-70"></div>
 
 <div class="bg-white shadow-md max-w-3xl h-5/6 m-auto p-4 rounded-xl fixed inset-0">
     @if(!$translation)

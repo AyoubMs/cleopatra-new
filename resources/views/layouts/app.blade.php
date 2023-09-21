@@ -65,6 +65,14 @@
 
 @livewireScripts
 <script>
+    async function createUser() {
+        await triggerEvent('createUser', []);
+    }
+
+    async function editUser(user) {
+        await triggerEvent('editUser', [user]);
+    }
+
     async function useTranslation() {
         await triggerEvent('useTranslation', [])
     }

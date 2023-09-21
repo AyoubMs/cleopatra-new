@@ -35,10 +35,17 @@ Route::middleware([
     })->name('dashboard');
 
     Route::get('/templates', function() {
-        if (!auth()->user()->is_admin) {
+        if (auth()->user()->role !== null && !(auth()->user()->role->name === 'admin' or auth()->user()->role->name === 'supervisor')) {
             abort(Response::HTTP_FORBIDDEN);
         }
         return view('templates.index');
+    });
+
+    Route::get('/users', function() {
+        if (auth()->user()->role !== null && !(auth()->user()->role->name === 'admin' or auth()->user()->role->name === 'supervisor')) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
+        return view('users.index');
     });
 });
 
@@ -68,23 +75,16 @@ Route::get('/auth/redirect', function () {
 
 Route::get('azuread/auth/callback', function () {
     $azureUser = Socialite::driver('azure')->user();
-
-    $user = User::firstOrCreate(
-        [
-            'email' => $azureUser->getEmail(),
-            'name' => $azureUser->getName(),
-        ]
-    );
-
-    $user->provider_id = $azureUser->getId();
-
-    if(is_null($user->currentTeam)) {
-        $user->ownedTeams()->save(Team::forceCreate([
-            'user_id' => $user->id,
-            'name' => explode(' ', $user->name, 2)[0]."'s Team",
-            'personal_team' => true,
-        ]));
+    $user = User::where(['email' => $azureUser->getEmail()])->first();
+    if ($user === null) {
+        $user = User::firstOrCreate(
+            [
+                'email' => $azureUser->getEmail(),
+                'name' => $azureUser->getName(),
+            ]
+        );
     }
+    $user->provider_id = $azureUser->getId();
 
     // $user->token
 

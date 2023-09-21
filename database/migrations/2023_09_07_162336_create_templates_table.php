@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('template_var');
             $table->string('title')->index();
             $table->timestamps();
+            $table->text('translations')->nullable();
         });
     }
 
