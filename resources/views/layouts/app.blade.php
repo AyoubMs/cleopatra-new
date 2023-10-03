@@ -64,7 +64,12 @@
 @stack('modals')
 
 @livewireScripts
+
 <script>
+    async function selectTemplateTemplates(template) {
+        await triggerEvent('selectTemplateTemplates', [template]);
+    }
+
     async function createUser() {
         await triggerEvent('createUser', []);
     }

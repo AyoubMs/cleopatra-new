@@ -22,7 +22,7 @@
                 <a href="/users"><i class="fa-regular fa-user text-xl cursor-pointer"></i></a>
             </div>
         @endif
-        <div class="absolute top-1/2" :class="open ? 'text-right end-0 position-right' : 'text-center start-9'">
+        <div class="absolute top-1/2" :class="open ? 'text-right end-0 position-right !right-[-1.25rem]' : 'text-center start-9'">
             <i @click="open = ! open" x-show="! open" class="fa-solid fa-circle-chevron-right text-4xl cursor-pointer"
                style="color: #0075ff;"></i>
             <i @click="open = ! open" x-show="open" class="fa-solid fa-circle-chevron-left text-4xl cursor-pointer"
@@ -83,7 +83,7 @@
          x-transition:enter="transition duration-1000"
          x-transition:enter-start="opacity-0 scale-125"
          x-transition:enter-end="opacity-100 scale-100"
-         class="w-full p-6 overflow-y-scroll" x-cloak>
+         class="w-full p-6 overflow-y-auto" x-cloak>
         @livewire('templates')
     </div>
 

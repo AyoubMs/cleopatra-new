@@ -25,8 +25,8 @@
                   class="!bg-blue-500 hover:!bg-white hover:text-blue-500 hover:border-blue-500">Use this template
         </x-button>
         <x-button
-                class="ml-auto !bg-white !text-blue-500 !border-blue-500 hover:!bg-blue-500 hover:!text-white hover:border-blue-500"
-                onclick="copyToClipboard('selectedTemplate')">Copy template
+            class="ml-auto !bg-white !text-blue-500 !border-blue-500 hover:!bg-blue-500 hover:!text-white hover:border-blue-500"
+            onclick="copyToClipboard('selectedTemplate')">Copy template
         </x-button>
     </div>
     <div id="selectedTemplate" class="hidden">{{ $selectedTemplate['template_var'] }}</div>

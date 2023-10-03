@@ -21,6 +21,7 @@ class Templates extends Component
     public $showCategories;
     public $showTemplates;
     public $showTemplate;
+    public $search;
 
     public $fa_icons = [
         'Internet' => 'wifi',
@@ -39,6 +40,8 @@ class Templates extends Component
     public function useTranslation()
     {
         $this->dispatch('useTemplate', $this->selectedTemplate['template_var']);
+        $this->templateAndTemplates(false, false);
+        $this->categoriesAndTemplates();
     }
 
     #[On('templateAndTemplates')]
@@ -48,10 +51,14 @@ class Templates extends Component
         $this->showTemplates = $showTemplates;
     }
 
+    #[On('selectTemplateTemplates')]
     public function selectTemplate($template)
     {
         $this->selectedTemplate = $template;
         $this->templateAndTemplates(true, false);
+        $this->categoriesAndTemplates(false);
+        $this->search = '';
+        $this->selectedCategory = Category::where('id', $template['category_id'])->first();
     }
 
     public function mount()
@@ -80,6 +87,10 @@ class Templates extends Component
 
     public function render()
     {
-        return view('livewire.templates');
+        $searchedTemplates = Template::where(function($query) {
+            $query->where('title', 'like', '%'.$this->search.'%')->orWhere('template_var', 'like', '%'.$this->search.'%');
+        })->orderBy('created_at', 'desc')->get();
+
+        return view('livewire.templates', ['searchedTemplates' => $searchedTemplates]);
     }
 }
