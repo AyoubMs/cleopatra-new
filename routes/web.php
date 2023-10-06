@@ -74,7 +74,7 @@ Route::get('/auth/redirect', function () {
 });
 
 Route::get('azuread/auth/callback', function () {
-    $azureUser = Socialite::driver('azure')->user();
+    $azureUser = Socialite::driver('azure')->stateless()->user();
     $user = User::where(['email' => $azureUser->getEmail()])->first();
     if ($user === null) {
         $user = User::firstOrCreate(
