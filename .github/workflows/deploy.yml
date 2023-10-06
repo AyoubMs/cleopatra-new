@@ -16,4 +16,4 @@ jobs:
           username: cleopatra
           password: ${{secrets.PASSWORD}}
           key: ${{secrets.PRIVATE_KEY}}
-          script: "cd www; git pull origin main"
+          script: "cd www; git pull origin main --force"
