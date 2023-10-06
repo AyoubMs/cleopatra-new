@@ -75,6 +75,10 @@ Route::get('/auth/redirect', function () {
 
 Route::get('azuread/auth/callback', function () {
     $azureUser = Socialite::driver('azure')->stateless()->user();
+    $emailParts = explode('@', $azureUser->getEmail());
+    if(!str_contains($emailParts[1], 'newcogroup')) {
+        abort(401);
+    }
     $user = User::where(['email' => $azureUser->getEmail()])->first();
     if ($user === null) {
         $user = User::firstOrCreate(
@@ -85,8 +89,6 @@ Route::get('azuread/auth/callback', function () {
         );
     }
     $user->provider_id = $azureUser->getId();
-
-    // $user->token
 
     // Log the user in
     auth()->login($user, true);
