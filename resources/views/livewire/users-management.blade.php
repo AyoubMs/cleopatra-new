@@ -67,16 +67,16 @@
                                     </div>
                                     <div class="ml-4">
                                         <div class="text-sm leading-5 font-medium text-gray-900">
-                                            {{ $user->name }}
+                                            {{ $user->name ?? '' }}
                                         </div>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-no-wrap">
-                                <div class="text-sm leading-5 text-gray-900">{{ $user->email }}</div>
+                                <div class="text-sm leading-5 text-gray-900">{{ $user->email ?? ''}}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-no-wrap">
-                                <div class="text-sm leading-5 text-gray-900">{{ $user->role->name }}</div>
+                                <div class="text-sm leading-5 text-gray-900">{{ $user->role->name ?? '' }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-no-wrap text-right text-sm leading-5 font-medium">
                                 <button class="text-indigo-600 hover:text-indigo-900" onclick="editUser({{ $user }})">

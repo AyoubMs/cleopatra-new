@@ -98,6 +98,7 @@ class UsersManagement extends Component
     }
     public function render()
     {
+        $users = [];
         if (Auth::user()->role->name === 'supervisor') {
             $users = User::where(function($query) {
                 $query->where('name', 'like', '%'.$this->searchTerm.'%')->orWhere('email', 'like', '%'.$this->searchTerm.'%');
