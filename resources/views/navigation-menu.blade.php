@@ -1,31 +1,55 @@
 <nav class="flex z-10 bg-white border-b border-gray-100 fixed h-screen border-r-2"
-     :class="open ? 'w-1/3' : 'w-14'" x-cloak>
+     :class="openSidebar ? 'w-1/3' : 'w-14'" x-cloak>
     <div class="w-14 border-r-2" x-cloak>
         <a href="{{ route('dashboard') }}">
             <x-application-mark class="block h-9"/>
         </a>
         <div class="bg-gray-100 w-1/2 mx-auto text-center">
-            <a href="/dashboard"><i x-show="! open" class="fa-solid fa-language text-xl cursor-pointer" style="color: #0075ff;"></i></a>
-            <a href="/dashboard"><i x-show="open" class="fa-solid fa-language text-xl cursor-pointer" style="color: #414f5e;"></i></a>
+            <a href="/dashboard">
+                @if(Route::current()->uri === 'dashboard')
+                    <i x-show="!openSidebar" class="fa-solid fa-language text-xl cursor-pointer" style="color: #0075ff;"></i>
+                    <i x-show="openSidebar" class="fa-solid fa-language text-xl cursor-pointer"></i>
+                @else
+                    <i class="fa-solid fa-language text-xl cursor-pointer" style="color: #414f5e;"></i>
+                @endif
+            </a>
         </div>
 
-        <div class="w-1/2 mx-auto text-center mt-4" :class="open ? 'bg-gray-100' : ''">
-            <i x-show="! open" @click="open = ! open" class="fa-solid fa-comments text-xl cursor-pointer"></i>
-            <i x-show="open" @click="open = ! open" class="fa-solid fa-comments text-xl cursor-pointer"
+        <div class="w-1/2 mx-auto text-center mt-4" @click="openSidebar = ! openSidebar"
+             :class="openSidebar ? 'bg-gray-100' : ''">
+            <i x-show="! openSidebar" class="fa-solid fa-comments text-xl cursor-pointer"></i>
+            <i x-show="openSidebar" class="fa-solid fa-comments text-xl cursor-pointer"
                style="color: #0075ff;"></i>
         </div>
         @if(auth()->user()->role !== null && (Auth::user()->role->name === 'admin' or Auth::user()->role->name === 'supervisor'))
             <div class="w-1/2 mx-auto text-center mt-4">
-                <a href="/templates"><i class="fa-solid fa-file-lines text-xl cursor-pointer"></i></a>
+                <a href="/templates">
+                    @if(Route::current()->uri === 'templates')
+                        <i x-show="!openSidebar" class="fa-solid fa-file-lines text-xl cursor-pointer" style="color: #0075ff;"></i>
+                        <i x-show="openSidebar" class="fa-solid fa-file-lines text-xl cursor-pointer" ></i>
+                    @else
+                        <i class="fa-solid fa-file-lines text-xl cursor-pointer"></i>
+                    @endif
+                </a>
             </div>
             <div class="w-1/2 mx-auto text-center mt-4">
-                <a href="/users"><i class="fa-regular fa-user text-xl cursor-pointer"></i></a>
+                <a href="/users" @click="users = true; templates = false">
+                    @if(Route::current()->uri === 'users')
+                        <i x-show="!openSidebar" class="fa-regular fa-user text-xl cursor-pointer" style="color: #0075ff;"></i>
+                        <i x-show="openSidebar" class="fa-regular fa-user text-xl cursor-pointer"></i>
+                    @else
+                        <i class="fa-regular fa-user text-xl cursor-pointer"></i>
+                    @endif
+                </a>
             </div>
         @endif
-        <div class="absolute top-1/2" :class="open ? 'text-right end-0 position-right !right-[-1.25rem]' : 'text-center start-9'">
-            <i @click="open = ! open" x-show="! open" class="fa-solid fa-circle-chevron-right text-4xl cursor-pointer"
+        <div class="absolute top-1/2"
+             :class="openSidebar ? 'text-right end-0 position-right !right-[-1.25rem]' : 'text-center start-9'">
+            <i @click="openSidebar = ! openSidebar" x-show="! openSidebar"
+               class="fa-solid fa-circle-chevron-right text-4xl cursor-pointer"
                style="color: #0075ff;"></i>
-            <i @click="open = ! open" x-show="open" class="fa-solid fa-circle-chevron-left text-4xl cursor-pointer"
+            <i @click="openSidebar = ! openSidebar" x-show="openSidebar"
+               class="fa-solid fa-circle-chevron-left text-4xl cursor-pointer"
                style="color: #0075ff;"></i>
         </div>
         <div class="absolute bottom-7 start-1.5">
@@ -79,7 +103,7 @@
             </x-dropdown>
         </div>
     </div>
-    <div x-show="open"
+    <div x-show="openSidebar"
          x-transition:enter="transition duration-1000"
          x-transition:enter-start="opacity-0 scale-125"
          x-transition:enter-end="opacity-100 scale-100"
@@ -88,7 +112,7 @@
     </div>
 
     <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
+    <div :class="{'block': openSidebar, 'hidden': ! openSidebar}" class="hidden sm:hidden">
 
         <!-- Responsive Settings Options -->
         <div class="pt-4 pb-1 border-t border-gray-200">

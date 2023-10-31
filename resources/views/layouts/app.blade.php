@@ -40,7 +40,7 @@
     <!-- Styles -->
     @livewireStyles
 </head>
-<body x-data="{ open: false }" class="font-sans antialiased bg-gray-100">
+<body x-data="{ openSidebar: false }" class="font-sans antialiased bg-gray-100">
 <x-banner/>
 
 <div class="min-h-screen bg-gray-100 flex">
@@ -66,6 +66,21 @@
 @livewireScripts
 
 <script>
+    async function chooseATemplate() {
+        await triggerEvent('chooseATemplate', []);
+    }
+    async function doTranslate(id) {
+        let text = id?.value
+        console.log(id?.id)
+        if (id?.id === 'firstText') {
+            await triggerEvent('translate', [text])
+        } else if (id?.id === 'inverseText') {
+            await triggerEvent('translateInverse', [text])
+        } else if (id?.id === 'firstTextLanguage') {
+            await triggerEvent('sendLanguageData', [document.getElementById('firstText')?.value, text])
+        }
+    }
+
     async function selectTemplateTemplates(template) {
         await triggerEvent('selectTemplateTemplates', [template]);
     }

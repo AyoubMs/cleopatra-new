@@ -2,10 +2,11 @@
     'lang_codes',
     'detectedSourceLang' => '',
     'value',
-    'language'
+    'language',
+    'id' => 'firstTextLanguage'
 ])
 
-<select
+<select id="{{$id}}"
     {{ $attributes->class(['form-control border-transparent']) }}>
     <option value='{{$value}}'>{{$language}}</option>
     @foreach($lang_codes as $code => $lang)

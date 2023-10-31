@@ -122,6 +122,7 @@ class TranslationComponent extends Component
         'ZH' => 'w-40',
     ];
     public $templates;
+    public $showButton = true;
 
     public function mount($property = '', $template = '')
     {
@@ -130,7 +131,7 @@ class TranslationComponent extends Component
     }
 
 
-
+    #[On('chooseATemplate')]
     public function chooseATemplate()
     {
         $this->dispatch('openSidebar');
@@ -141,9 +142,9 @@ class TranslationComponent extends Component
     {
         $this->mount($prop, $text);
         if ($prop === 'inverseText') {
-            $this->translateInverse();
+            $this->translate($text, true);
         } else if ($prop === 'firstText') {
-            $this->translate();
+            $this->translate($text);
         }
     }
 
@@ -151,7 +152,7 @@ class TranslationComponent extends Component
     public function useTemplate($template)
     {
         $this->mount('inverseText', $template);
-        $this->translateInverse();
+        $this->translateInverse($this->inverseText);
     }
 
     public function translation($valueFromRedis, $valueSetRedis, $inverse = false)
@@ -174,17 +175,39 @@ class TranslationComponent extends Component
         $this->setPropertiesFromApi($userTranslation, $inverse);
     }
 
-    public function translateInverse()
+    #[On('translateInverse')]
+    public function translateInverse($text = '')
     {
+        $this->inverseText = $text;
         $inverseTargetLang = $this->language === 'none' ? $this->detectedSourceLang : $this->language;
-        $this->translation(Redis::hgetall("$this->inverseText.$inverseTargetLang") , $this->inverseText.$inverseTargetLang, true);
+        if ($inverseTargetLang != null) {
+            $this->translation(Redis::hgetall($this->inverseText . '.' . $inverseTargetLang), $this->inverseText . '.' . $inverseTargetLang, true);
+        }
+        if ($this->inverseText !== '') {
+            $this->showButton = false;
+        } else {
+            $this->showButton = true;
+        }
     }
 
-    public function translate($inverse = false)
+    #[On('sendLanguageData')]
+    public function sendLanguageData($text, $language)
+    {
+//        dd($this->firstText);
+        $this->translate($text);
+    }
+
+    #[On('translate')]
+    public function translate($text = "", $inverse = false)
     {
         if ($inverse) {
-            $this->translateInverse();
+            $this->inverseText = $text;
+            $this->translateInverse($text);
             return;
+        }
+
+        if ($text !== '') {
+            $this->firstText = $text;
         }
         foreach ($this->templates as $template) {
             foreach (json_decode($template->translations) as $translation) {
@@ -199,7 +222,7 @@ class TranslationComponent extends Component
                 }
             }
         }
-        $this->translation(Redis::hgetall("$this->firstText.$this->targetLanguage"), $this->firstText.$this->targetLanguage);
+        $this->translation(Redis::hgetall($this->firstText . '.' . $this->targetLanguage), $this->firstText . '.' . $this->targetLanguage);
     }
 
     public function setPropertiesFromApi($api, $inverse = false)
@@ -216,7 +239,7 @@ class TranslationComponent extends Component
     public function queryDeeplAPI($inverse = false)
     {
         try {
-            $authKey = env('DEEPL_API_KEY');
+            $authKey = env('DEEPL_API_KEY', 'd772e774-036b-5877-5565-240675593e6b');
             $translator = new Translator($authKey);
             if ($inverse) {
                 $sourceLang = null;
