@@ -40,7 +40,8 @@
     <x-language-block>
         <x-language-selector>
             @if($language === 'none')
-                {{ $detectedSourceLang !== null ? $lang_codes[$detectedSourceLang === 'EN' ? 'EN-US' : $detectedSourceLang] : 'Waiting for input...' }}
+{{--                @dd($detectedSourceLang)--}}
+                {{ str_split($detectedSourceLang ?? '', 2)[0] !== null ? $lang_codes[str_split($detectedSourceLang ?? '', 2)[0] === 'EN' ? 'EN-US' : str_split($detectedSourceLang ?? '', 2)[0]] : 'Waiting for input...' }}
                 {{ $errorMessage }}
             @else
                 {{ $language !== 'none' ? $lang_codes[$language === 'EN' ? 'EN-US' : $language] : 'Waiting for input...' }}
