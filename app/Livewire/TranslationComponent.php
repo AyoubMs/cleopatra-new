@@ -215,7 +215,7 @@ class TranslationComponent extends Component
                     $api = [
                         'translatedText' => $translation->trans,
                         'detectedSourceLang' => $translation->lang,
-                        'selectectedSourceLang' => $this->language
+                        'selectedSourceLang' => $this->language
                     ];
                     $this->setPropertiesFromApi($api);
                     return;
