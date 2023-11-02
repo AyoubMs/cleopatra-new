@@ -24,6 +24,7 @@ class TranslationComponent extends Component
     public $errorMessage;
 
     public $lang_codes = [
+        "" => "Waiting for input...",
         "BG" => "Bulgarian",
         "CS" => "Czech",
         "DA" => "Danish",
