@@ -212,7 +212,7 @@ class TranslationComponent extends Component
         }
         foreach ($this->templates as $template) {
             foreach (json_decode($template->translations) as $translation) {
-                if ($translation->lang === $this->lang_codes[$this->targetLanguage] && $template->template_var === $this->firstText) {
+                if ($translation->lang === $this->lang_codes[$this->targetLanguage] && $template->template_var === $this->firstText && $translation->trans !== "") {
                     $api = [
                         'translatedText' => $translation->trans,
                         'detectedSourceLang' => $translation->lang,
