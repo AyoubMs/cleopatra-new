@@ -21,7 +21,7 @@
     <textarea class="w-full h-[40rem] p-4 bg-white border-transparent"
               disabled>{{ $selectedTemplate['template_var'] }}</textarea>
     <div class="mt-4 flex">
-        <x-button @click="open = false; useTemplate()" onclick="useTranslation()"
+        <x-button @click="openSidebar = false; useTemplate()" onclick="useTranslation()"
                   class="!bg-blue-500 hover:!bg-white hover:text-blue-500 hover:border-blue-500">Use this template
         </x-button>
         <x-button

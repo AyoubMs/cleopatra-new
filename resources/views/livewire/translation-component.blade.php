@@ -31,7 +31,7 @@
 
         <x-paste-icon id="inverseText"/>
         @if($showButton)
-            <x-button @click="open = true" onclick="chooseATemplate()"
+            <x-button @click="openSidebar = true" onclick="chooseATemplate()"
                       class="!bg-blue-500 hover:!bg-white hover:text-blue-500 hover:border-blue-500 relative bottom-3/4 start-60">
                 Choose a Template
             </x-button>
